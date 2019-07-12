@@ -76,6 +76,7 @@ public class Controller {
 			if (note != null) {
 				selectedNote = note;
 				window.addText(note.getTitle(), note.getContent());
+				window.getTextPane().setCaretPosition(0);
 			}
 		}
 	}

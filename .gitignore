@@ -85,3 +85,4 @@ WebContent/META-INF/
 notes.dat
 .classpath
 .project
+application.properties

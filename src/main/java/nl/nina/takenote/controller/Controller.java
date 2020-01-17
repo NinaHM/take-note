@@ -18,10 +18,13 @@ import javax.swing.event.ListSelectionEvent;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import nl.nina.takenote.model.Note;
+import nl.nina.takenote.repository.NoteRepository;
 import nl.nina.takenote.view.Window;
 
+@Component
 public class Controller {
 
 	private static final String FILE_NAME = "notes.dat";
@@ -31,6 +34,9 @@ public class Controller {
 
 	@Autowired
 	private ObjectFactory<Note> noteFactory;
+	
+	@Autowired
+	NoteRepository noteRepository;
 
 	public Controller(Window window) {
 		this.window = window;
@@ -150,36 +156,19 @@ public class Controller {
 	}
 
 	private void saveFile() {
-		try (ObjectOutputStream noteFile = new ObjectOutputStream(
-				new BufferedOutputStream(new FileOutputStream(FILE_NAME)))) {
-			for (Note note : notes) {
-				noteFile.writeObject(note);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		noteRepository.saveAll(notes);
+//		try (ObjectOutputStream noteFile = new ObjectOutputStream(
+//				new BufferedOutputStream(new FileOutputStream(FILE_NAME)))) {
+//			for (Note note : notes) {
+//				noteFile.writeObject(note);
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	private void readFile() {
-		File file = new File(FILE_NAME);
-		if (file.exists()) {
-			try (ObjectInputStream noteFile = new ObjectInputStream(
-					new BufferedInputStream(new FileInputStream(FILE_NAME)))) {
-				boolean eof = false;
-				while (!eof) {
-					try {
-						Note note = (Note) noteFile.readObject();
-						notes.add(note);
-						window.addNote(note);
-					} catch (EOFException e) {
-						eof = true;
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
+		notes = noteRepository.findAll();
+		notes.forEach(note -> window.addNote(note));
 	}
 }

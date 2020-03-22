@@ -83,6 +83,3 @@ local.properties
 WebContent/META-INF/
 /build/
 notes.dat
-.classpath
-.project
-application.properties
